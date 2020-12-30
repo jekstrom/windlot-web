@@ -9,7 +9,10 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: theme.spacing(1),
         
       },
-    },
+    }, 
+    button:{
+      margin: theme.spacing(3)
+    }
   }),
 );
 
@@ -41,6 +44,10 @@ function CreateListing() {
               <Input id="contactinfo" aria-describedby="contactinfo-helper" />
               <FormHelperText id="contactinfo-helper">How will people contact you</FormHelperText>
             </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <Button variant="contained" color="default" className={classes.button}>Cancel</Button>
+            <Button variant="contained" color="primary" className={classes.button}>Submit</Button>
           </Grid>
         </Grid>
       </form>
