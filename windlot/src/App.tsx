@@ -8,7 +8,10 @@ import {
 import './App.css';
 import CreateListing from "./pages/CreateListing"
 import Home from "./pages/Home"
+import Login from "./pages/Login"
+import CreateAccount from "./pages/CreateAccount"
 import { Button } from '@material-ui/core';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -21,6 +24,15 @@ function App() {
                 <Link to="/create-listing">Create Listing</Link>
               </Button>
               <Button>
+                <Link to="/login">Login</Link>
+              </Button>
+              <Button>
+                <Link to="/create-account">Create Account</Link>
+              </Button>
+              <Button>
+                <Link to="/profile">Profile</Link>
+              </Button>
+              <Button>
                 <Link to="/">Home</Link>
               </Button>
             </ul>
@@ -29,9 +41,18 @@ function App() {
             <Route path="/create-listing">
               <CreateListing />
             </Route>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/create-account">
+              <CreateAccount />
+            </Route>
+            <Route path="/profile">
+              <Profile />
+            </Route>
             <Route path="/">
               <Home />
-            </Route>
+            </Route>            
           </Switch>
         </div>
       </Router>
