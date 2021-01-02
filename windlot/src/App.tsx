@@ -12,6 +12,7 @@ import Login from "./pages/Login"
 import CreateAccount from "./pages/CreateAccount"
 import { Button } from '@material-ui/core';
 import Profile from './pages/Profile';
+import ListingDetails from './pages/ListingDetails';
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
             <ul>
               <Button>
                 <Link to="/create-listing">Create Listing</Link>
+              </Button>
+              <Button>
+                <Link to="/listing-details">Listing Details</Link>
               </Button>
               <Button>
                 <Link to="/login">Login</Link>
@@ -40,6 +44,9 @@ function App() {
           <Switch>
             <Route path="/create-listing">
               <CreateListing />
+            </Route>
+            <Route path="/listing-details">
+              <ListingDetails />
             </Route>
             <Route path="/login">
               <Login />
