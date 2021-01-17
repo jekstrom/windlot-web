@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-windlot-dev-115413-authRole",
+      "UnauthRoleArn": "arn:aws:iam::224650144598:role/amplify-windlot-dev-115413-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::224650144598:role/amplify-windlot-dev-115413-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-windlot-dev-115413-deployment",
+      "UnauthRoleName": "amplify-windlot-dev-115413-unauthRole",
+      "StackName": "amplify-windlot-dev-115413",
+      "StackId": "arn:aws:cloudformation:us-west-2:224650144598:stack/amplify-windlot-dev-115413/a5b4df10-5834-11eb-93b8-02af25e6679f",
+      "AmplifyAppId": "d2uze4abadeia3"
+    },
+    "categories": {
+      "auth": {
+        "windlot030073e6": {}
+      }
+    }
+  }
+}
