@@ -7,7 +7,8 @@ export interface Action {
 
 export interface LoginStatus {
     loggedIn: boolean,
-    loggedInUser: any | null
+    loggedInUser: any | null,
+    logInMessage: string | null
 }
 
 export const login = (loginStatus: LoginStatus) => ({

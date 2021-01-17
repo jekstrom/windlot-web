@@ -1,9 +1,6 @@
-import React, { FC } from 'react';
-import { withRouter } from 'react-router-dom'
-import { createStyles, Theme, makeStyles, withStyles, WithStyles } from '@material-ui/core/styles';
-import { Button, Box, Checkbox, FormControl, Input, InputLabel, TextField, Grid } from '@material-ui/core';
-import { sizing } from '@material-ui/system';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import React from 'react';
+import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
+import { Button, FormControl, TextField, Grid } from '@material-ui/core';
 import logo from './logo2.png'
 import { Auth } from 'aws-amplify';
 import { CognitoUser } from 'amazon-cognito-identity-js'
@@ -29,7 +26,8 @@ const styles = (theme: any) =>
 interface IProps extends WithStyles<typeof styles> {
   routerProps: any,
   loggedIn: boolean,
-  loggedInUser: any | null
+  loggedInUser: any | null,
+  logInMessage: string | null
 }
 
 interface IState {
@@ -53,13 +51,15 @@ class Login extends React.Component<IProps, IState> {
       const { attributes } = await Auth.currentAuthenticatedUser();
       store.dispatch(login({
         loggedIn: !!attributes,
-        loggedInUser: attributes
+        loggedInUser: attributes,
+        logInMessage: ""
       }));
     } catch (error) {
       console.log("Error getting user: ", error)
       store.dispatch(login({
         loggedIn: false,
-        loggedInUser: null
+        loggedInUser: null,
+        logInMessage: ""
       }));
     }
   }
@@ -71,14 +71,16 @@ class Login extends React.Component<IProps, IState> {
         self.setState({ user: user });
         store.dispatch(login({
           loggedIn: !!user.attributes,
-          loggedInUser: user.attributes
+          loggedInUser: user.attributes,
+          logInMessage: ""
         }));
         self.props.routerProps.history.push("/")
     } catch (error) {
         console.log("error signing in: ", error);
         store.dispatch(login({
           loggedIn: false,
-          loggedInUser: null
+          loggedInUser: null,
+          logInMessage: error.message
         }));
     }
   }
@@ -88,10 +90,19 @@ class Login extends React.Component<IProps, IState> {
         await Auth.signOut();
         store.dispatch(login({
           loggedIn: false,
-          loggedInUser: null
+          loggedInUser: null,
+          logInMessage: ""
         }));
     } catch (error) {
         console.log("error signing out: ", error);
+    }
+  }
+
+  _loginError = () => {
+    if (this.props.logInMessage) {
+      return <Grid item xs={12}>
+          Invalid email or password
+      </Grid>
     }
   }
 
@@ -117,6 +128,7 @@ class Login extends React.Component<IProps, IState> {
                 />
             </FormControl>
         </Grid>
+        {this._loginError()}
         <Grid item xs={12}>
             <Button 
               variant="contained"
@@ -165,7 +177,8 @@ class Login extends React.Component<IProps, IState> {
 const mapStateToProps = (state: any) => {
   return {
     loggedIn: state.LoginReducer.loggedIn,
-    loggedInUser: state.LoginReducer.loggedInUser
+    loggedInUser: state.LoginReducer.loggedInUser,
+    logInMessage: state.LoginReducer.logInMessage
   }
 }
 

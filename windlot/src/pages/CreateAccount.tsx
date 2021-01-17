@@ -1,8 +1,6 @@
 import React from 'react';
-import { createStyles, Theme, makeStyles, withStyles, WithStyles } from '@material-ui/core/styles';
-import { Button, Box, Checkbox, FormControl, Input, InputLabel, TextField, Grid, CircularProgress } from '@material-ui/core';
-import { sizing } from '@material-ui/system';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
+import { Button, FormControl, Input, InputLabel, TextField, Grid, CircularProgress } from '@material-ui/core';
 import logo from './logo2.png'
 import { Auth } from 'aws-amplify';
 import { CognitoUser } from 'amazon-cognito-identity-js'

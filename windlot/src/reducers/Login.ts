@@ -2,7 +2,8 @@ import { LoginStatus, Action } from '../actions/index';
 
 const initialState: LoginStatus = {
     loggedIn: false,
-    loggedInUser: null
+    loggedInUser: null,
+    logInMessage: ""
 };
 
 const LoginReducer = (state = initialState, action: Action) => {
@@ -10,7 +11,8 @@ const LoginReducer = (state = initialState, action: Action) => {
         case 'LOGIN':
             return { 
                 loggedIn: action.payload.loggedIn,
-                loggedInUser: action.payload.loggedInUser
+                loggedInUser: action.payload.loggedInUser,
+                logInMessage: action.payload.logInMessage
             };
         default:
             return state;
