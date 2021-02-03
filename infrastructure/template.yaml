@@ -1,0 +1,117 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  listing indexing function
+
+Parameters:
+  S3SourceBucketStackName:
+    Type: String
+    Description: The source bucket for storing code.
+  UserPoolId:
+    Type: String
+    Description: The user pool id for auth.
+  Environment:
+    Type: String
+    Description: The environment deploying to.
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  ElasticsearchDomain:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName: !Sub "listings-${Environment}"
+      ElasticsearchVersion: "7.9"
+      ElasticsearchClusterConfig:
+        DedicatedMasterEnabled: "false"
+        InstanceCount: "1"
+        ZoneAwarenessEnabled: "false"
+        InstanceType: "t3.small.elasticsearch"
+      EBSOptions:
+        EBSEnabled: true
+        Iops: 0
+        VolumeSize: 20
+        VolumeType: "gp2"
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal: "*"
+            Action: "es:*"
+            Resource: "*" # FIX ME 
+
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Environment
+      Cors: "'*'"
+      Auth:
+        Authorizers:
+          CognitoAuth:
+            UserPoolArn: !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${UserPoolId}"
+      # Domain:
+      #   DomainName: notification.i.deadhands.io
+      #   CertificateArn: !Sub "arn:aws:acm:us-east-1:${AWS::AccountId}:certificate/${CertificateId}"
+      #   EndpointConfiguration: EDGE        
+
+  ListingIndexerFunction:
+    Type: AWS::Serverless::Function
+    DependsOn: ElasticsearchDomain
+    Properties:
+      CodeUri: function.zip
+      PackageType: Zip
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Timeout: 180
+      Environment:
+        Variables:
+          ElasticsearchDomain: !GetAtt ElasticsearchDomain.DomainEndpoint
+      Events:
+        Notification:
+          Type: Api 
+          Properties:
+            Path: /index
+            Method: post
+            RestApiId: !Ref ApiGatewayApi
+            Auth:
+              Authorizer: CognitoAuth
+      Policies:
+        - AWSLambdaExecute
+        - Version: '2012-10-17' 
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:GetObjectACL
+                - s3:ListBucket
+                - s3:PutObject
+              Resource: 
+                - Fn::Sub:
+                    - "arn:aws:s3:::${bucketName}"
+                    - bucketName: 
+                        Fn::ImportValue: !Sub "${S3SourceBucketStackName}-BucketName"
+                - Fn::Sub:
+                    - "arn:aws:s3:::${bucketName}/*"
+                    - bucketName:
+                        Fn::ImportValue: !Sub "${S3SourceBucketStackName}-BucketName"
+
+
+
+
+# Outputs:
+#   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+#   # Find out more about other implicit resources you can reference within SAM
+#   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+#   NotificationApi:
+#     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+#     Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/handle/"
+#   NotificationFunction:
+#     Description: "Notification Lambda Function ARN"
+#     Value: !GetAtt NotificationFunction.Arn
+#   NotificationFunctionIamRole:
+#     Description: "Implicit IAM Role created for Notification function"
+#     Value: !GetAtt NotificationFunctionRole.Arn

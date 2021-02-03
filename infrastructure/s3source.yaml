@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  source code bucket
+Resources:
+    EncryptedS3Bucket:
+        Type: AWS::S3::Bucket
+        Properties:
+          BucketName: !Sub 'windlot-source-dev-${AWS::AccountId}'
+          BucketEncryption:
+            ServerSideEncryptionConfiguration:
+              - ServerSideEncryptionByDefault:
+                  SSEAlgorithm: AES256
+        DeletionPolicy: Delete
+
+Outputs:
+    BucketName:
+        Value: !Ref EncryptedS3Bucket
+        Export:
+            Name: !Sub "${AWS::StackName}-BucketName"
