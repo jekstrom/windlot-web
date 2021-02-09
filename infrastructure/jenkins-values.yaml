@@ -199,6 +199,7 @@ controller:
   # List of plugins to install in addition to those listed in controller.installPlugins
   additionalPlugins:
     - job-dsl:1.77
+    - github:1.32.0
 
   # Enable to initialize the Jenkins controller only once on initial installation.
   # Without this, whenever the controller gets restarted (Evicted, etc.) it will fetch plugin updates which has the potential to cause breakage.
