@@ -104,7 +104,7 @@ controller:
   targetPort: 8080
   # For minikube, set this to NodePort, elsewhere use LoadBalancer
   # Use ClusterIP if your setup includes ingress controller
-  serviceType: ClusterIP
+  serviceType: LoadBalancer
   # Jenkins controller service annotations
   serviceAnnotations: {}
   # Jenkins controller custom labels
@@ -197,7 +197,8 @@ controller:
     - configuration-as-code:1.46
 
   # List of plugins to install in addition to those listed in controller.installPlugins
-  additionalPlugins: []
+  additionalPlugins:
+    - job-dsl:1.77
 
   # Enable to initialize the Jenkins controller only once on initial installation.
   # Without this, whenever the controller gets restarted (Evicted, etc.) it will fetch plugin updates which has the potential to cause breakage.
@@ -231,10 +232,23 @@ controller:
   # etc.  Best reference is https://<jenkins_url>/configuration-as-code/reference.  The example below creates a welcome message:
   JCasC:
     defaultConfig: true
-    configScripts: {}
-    #  welcome-message: |
-    #    jenkins:
-    #      systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
+    configScripts:
+      welcome-message: |
+        jenkins:
+          systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
+      global-libraries: |-
+        unclassified:
+          globalLibraries:
+            libraries:
+              - name: "pipeline-library-demo"
+                defaultVersion: "master"
+                implicit: true
+                retriever:
+                  modernSCM:
+                    scm:
+                      git:
+                        id: "pipeline-libraries"
+                        remote: "https://github.com/jekstrom/windlot-pipeline"
     # Ignored if securityRealm is defined in controller.JCasC.configScripts and
     # ignored if controller.enableXmlConfig=true as controller.securityRealm takes precedence
     securityRealm: |-
@@ -243,7 +257,7 @@ controller:
         enableCaptcha: false
         users:
         - id: "${chart-admin-username}"
-          name: "Jenkins Admin"
+          name: "Richard"
           password: "${chart-admin-password}"
     # Ignored if authorizationStrategy is defined in controller.JCasC.configScripts
     authorizationStrategy: |-
@@ -265,6 +279,7 @@ controller:
       image: kiwigrid/k8s-sidecar:0.1.275
       imagePullPolicy: IfNotPresent
       resources: {}
+      
         #   limits:
         #     cpu: 100m
         #     memory: 100Mi
