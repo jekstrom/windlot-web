@@ -2,7 +2,5 @@ properties([pipelineTriggers([githubPush()])])
 
 @Library('pipeline-library-demo')_
 
-stage('Demo') {
-    echo 'Hello blorld'
-    sayHello 'James'
-}
+def common = new com.prj.Common()
+common.runPipeline
