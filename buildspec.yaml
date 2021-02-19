@@ -8,10 +8,10 @@ phases:
       - cd windlot && npm install
   build:
     commands:
-      - cd windlot && npm run-script build
+      - npm run-script build
 
 artifacts:
-  base-directory: ./windlot/build
+  base-directory: ./build
   files:
     - '**/*'
 
