@@ -11,10 +11,10 @@ phases:
       - npm run-script build
 
 artifacts:
-  base-directory: ./build
+  base-directory: ./windlot/build
   files:
     - '**/*'
 
 cache:
   paths:
-    - './node_modules/**/*'
+    - './windlot/node_modules/**/*'
