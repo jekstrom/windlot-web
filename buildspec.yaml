@@ -8,7 +8,7 @@ phases:
       - npm install
   build:
     commands:
-      - yarn build
+      - npm run-script build
 
 artifacts:
   base-directory: ./build
