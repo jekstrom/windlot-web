@@ -1,3 +1,7 @@
 #!/bin/bash
 cd /home/webapps/windlot
-serve -l 80 .
+npm start
+pm2 start npm --name "windlot-web" -- start
+pm2 startup
+pm2 save
+pm2 restart all

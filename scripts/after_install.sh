@@ -1,3 +1,3 @@
 #!/bin/bash
 cd /home/webapps/windlot
-npm install serve -g
+npm install pm2 -g
