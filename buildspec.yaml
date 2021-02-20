@@ -11,8 +11,6 @@ phases:
       - npm run-script build
       - cp ../appspec.yml ./build/appspec.yml
       - cp -r ../scripts ./build/scripts/
-      - cp package.json ./build/package.json
-      - cp -r node_modules/ ./build/node_modules/
 
 artifacts:
   base-directory: ./windlot/build
