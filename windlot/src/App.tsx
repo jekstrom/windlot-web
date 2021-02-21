@@ -26,7 +26,7 @@ function App() {
       <div className="App">
         <Router>
           <div>
-            <nav>
+            {/* <nav>
               <ul>
                 <Button>
                   <Link to="/create-listing">Create Listing</Link>
@@ -47,7 +47,7 @@ function App() {
                   <Link to="/">Home</Link>
                 </Button>
               </ul>
-            </nav>
+            </nav> */}
             <Switch>
               <Route path="/create-listing">
                 <CreateListing />
