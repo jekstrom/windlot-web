@@ -13,7 +13,8 @@ import { Button } from '@material-ui/core';
 import Amplify, { Auth } from 'aws-amplify';
 import awsconfig from './aws-exports';
 
-import Home from "./pages/Home"
+//import Home from "./pages/Home"
+import Index from "./landing/Home"
 import Login from "./pages/Login"
 import CreateAccount from "./pages/CreateAccount"
 import Profile from './pages/Profile';
@@ -68,7 +69,7 @@ function App() {
                 <Profile />
               </Route>
               <Route path="/">
-                <Home />
+                <Index />
               </Route>            
             </Switch>
           </div>
