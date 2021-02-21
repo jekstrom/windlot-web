@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }, 
     body: {
       '& > *': {
-        margin: theme.spacing(1),
+        margin: theme.spacing(1)
       },
     }, 
     button:{
@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
     body1: {
       backgroundImage: `url(${mountBackground})`,
       backgroundSize: "100%",
+      backgroundRepeat: "no-repeat",
       height: 900,
       margin: theme.spacing(0),
       textAlign: "center",
@@ -44,8 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     logo: {
       textAlign: "start",
-      margin: theme.spacing(0),
-      marginRight: -50
+      margin: theme.spacing(0)
     },
     logoHeader: {
       backgroundColor: `rgb(20, 156, 123)`
@@ -69,7 +69,8 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(0),
       marginTop: 10,
       fontFamily: "Segoe UI",
-      textTransform: "uppercase"
+      textTransform: "uppercase",
+      textShadow: "0 0 5px white"
     }
   }),
 );
@@ -80,15 +81,15 @@ function Home() {
   return (
     <Grid className={classes.root} container spacing={1}>
       <Grid container className={classes.logoHeader} xs={12} spacing={2}>
-        <Grid className={classes.logo} item xs={1} md={1}>
+        <Grid className={classes.logo} item xs={3} md={1}>
           <img width="50%" src={logo} />
         </Grid>
-        <Grid className={classes.logo} justify="center" alignItems="center" item xs={1} md={5}>
+        <Grid className={classes.logo} justify="center" alignItems="center" item xs={3} md={5}>
           <Typography gutterBottom className={classes.title}>
             Hektari
           </Typography>
         </Grid>
-        <Grid className={classes.learnmore} item xs={1} md={6}>
+        <Grid className={classes.learnmore} item xs={6} md={6}>
           <Button 
               variant="contained"
               color="primary"
