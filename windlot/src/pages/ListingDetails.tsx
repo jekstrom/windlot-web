@@ -2,7 +2,7 @@ import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Button, Box, Grid, Divider, List, ListItem, ListItemText } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import land from './land.jpg'
+import land from './pics/land.jpg'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -37,7 +37,7 @@ class CreateListing extends React.Component<IProps, IState> {
         let authtoken = data.getIdToken().getJwtToken();
         let response = await fetch(
             // TODO: Get url automatically (configuration??)
-            '',
+            'https://0mxjsyzjjj.execute-api.us-west-2.amazonaws.com/dev/index/',
             {
                 mode: 'cors',
                 method: 'POST',

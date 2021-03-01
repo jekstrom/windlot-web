@@ -1,243 +1,117 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Button, Box, Grid, Divider, List, ListItem, ListItemText, Typography, Card, CardActions, CardContent } from '@material-ui/core';
-import { Parallax, Background } from 'react-parallax';
-import header from './header_mountains2.png'
-import mountBackground from './mountains.jpg'
-import deer from './deers.jpg'
-import deerMed from './deers_med.jpg'
-import whitetail from './white_tail_snow.jpg'
-import whitetailMed from './white_tail_snow_med.jpg'
-import whitetailSmall from './white_tail_snow_small.jpg'
-import logo from './logo2.png'
+import { Button, Grid, Typography, Card, CardActions, CardContent, CardMedia, FormControlLabel, TextField, Checkbox, Hidden } from '@material-ui/core';
+import listing1 from './pics/land.jpg'
+import SearchResults from '../components/SearchResults'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      '& > *': {
-        margin: theme.spacing(0),
-      },
-    }, 
-    body: {
-      '& > *': {
-        margin: theme.spacing(1)
-      },
-    }, 
-    button:{
-      margin: theme.spacing(1)
-    },
-    cell: {
-        textAlign: "center",
-        border: 1,
-        borderStyle: "solid"
-    },
-    header: {
-      //backgroundColor: "magenta",
-      backgroundImage: `url(${header})`,
-      backgroundSize: "100%",
-      height: 100,
-      margin: theme.spacing(0),
-      textAlign: "center",
-      color: "black"
-    },
-    body1: {
-      // backgroundImage: `url(${mountBackground})`,
-      // backgroundSize: "100%",
-      // backgroundRepeat: "no-repeat",
-      height: 900,
-      width: "100%",
-      margin: theme.spacing(0),
-      textAlign: "center",
-      color: "black"
-    },
-    body2: {
-      //height: 1000,
-      width: "100%",
-      margin: theme.spacing(0),
-      textAlign: "left",
-      color: "black"
-    },
-    logo: {
-      textAlign: "start",
-      margin: theme.spacing(0)
-    },
-    logoHeader: {
-      backgroundColor: `rgb(20, 156, 123)`
-    },
-    learnmore: {
-      textAlign: "end",
-      width: "100%",
-      margin: theme.spacing(0)
-    },
-    title:{
-        fontWeight: 500,
-        fontSize: 18,
-        margin: theme.spacing(0),
-        marginTop: 10,
-        fontFamily: "Segoe UI",
-        textTransform: "uppercase"
-    },
-    banner: {
-      fontWeight: 700,
-      fontSize: 18,
-      margin: theme.spacing(0),
-      marginTop: 10,
-      fontFamily: "Segoe UI",
-      textTransform: "uppercase",
-      textShadow: "1px 1px 1px white"
-    },
-    bannerRight: {
-      fontWeight: 700,
-      fontSize: 18,
-      margin: theme.spacing(5),
-      marginTop: 10,
-      fontFamily: "Segoe UI",
-      textTransform: "uppercase",
-      textShadow: "1px 1px 1px white"
-    },
-    card: {
-      width: "320px",
-      margin: "20px"
+interface Filter {
+  Name: string,
+  Count: number,
+}
+
+interface FilterCategory {
+  Filters: Array<Filter>,
+  Name: string
+}
+
+interface Item {
+  Name: string,
+  Price: number,
+  Id: string,
+  ImageUrl: string
+}
+
+interface SearchResultsProps {
+  Filters: Array<FilterCategory>,
+  Items: Array<Item>
+}
+
+
+interface IProps {
+
+}
+
+interface IState {
+  filters: Array<FilterCategory>,
+  items: Array<Item>
+}
+
+class Home extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      filters: [
+        {
+          "Name": "Game Type",
+          "Filters": [
+            {
+              "Name": "Deer",
+              "Count": 2,
+            },
+            {
+              "Name": "Grouse",
+              "Count": 3,
+            },
+            {
+              "Name": "Duck",
+              "Count": 44,
+            },
+            {
+              "Name": "Bear",
+              "Count": 5,
+            },
+          ]
+        },
+        {
+          "Name": "Amenities",
+          "Filters": [
+            {
+              "Name": "Privy",
+              "Count": 24,
+            },
+            {
+              "Name": "Parking",
+              "Count": 23,
+            },
+            {
+              "Name": "Tree stand",
+              "Count": 414,
+            },
+            {
+              "Name": "Blind",
+              "Count": 56,
+            },
+          ]
+        }
+      ],
+      items: [
+        {
+          "Name": "Listing 1",
+          "Price": 123.23,
+          "ImageUrl": listing1,
+          "Id": "3940-2394-345"
+        },
+        {
+          "Name": "Listing 2",
+          "Price": 23.23,
+          "ImageUrl": listing1,
+          "Id": "3950-2394-345"
+        },
+        {
+          "Name": "Listing 3",
+          "Price": 1243.23,
+          "ImageUrl": listing1,
+          "Id": "3970-2394-345"
+        },
+      ]
     }
-  }),
-);
+  }
 
-function Home() {
-  const classes = useStyles();
-  const snowDeerImageVariants = [
-    {
-      url: whitetailSmall,
-      width: 500
-    },
-    {
-      url: whitetailMed,
-      width: 800
-    },
-    {
-      url: whitetail,
-      width: 3200
-    }
-  ];
-  const snowDeerSrcSet = snowDeerImageVariants
-  .map(variant => `${variant.url} ${variant.width}w`)
-  .join(",");
-
-  const deerImageVariants = [
-    {
-      url: deerMed,
-      width: 500
-    },
-    {
-      url: deer,
-      width: 800
-    },
-    {
-      url: deer,
-      width: 3200
-    }
-  ];
-  const deerSrcSet = deerImageVariants
-  .map(variant => `${variant.url} ${variant.width}w`)
-  .join(",");
-
-  return (
-    <Grid className={classes.root} container spacing={1}>
-      <Grid container className={classes.logoHeader} xs={12} spacing={2}>
-        <Grid className={classes.logo} item xs={3} md={1}>
-          <img width="50%" src={logo} />
-        </Grid>
-        <Grid className={classes.logo} justify="center" alignItems="center" item xs={3} md={5}>
-          <Typography gutterBottom className={classes.title}>
-            Hektari
-          </Typography>
-        </Grid>
-        <Grid className={classes.learnmore} item xs={6} md={6}>
-          <Button 
-              variant="contained"
-              color="primary"
-              className={classes.button}>
-                Learn More
-            </Button>
-        </Grid>
-      </Grid>
-      <Grid container spacing={0} xs={12} className={classes.body} justify="center">
-        <Grid item className={classes.body1}>
-          <Parallax
-            bgImage={mountBackground}
-            bgImageAlt="mountain"
-            strength={-300}
-          >
-            <Typography display="block" gutterBottom className={classes.banner}>
-                Make money from your unused land
-              </Typography>
-              <Typography display="block" gutterBottom className={classes.banner}>
-                Hunt the back wood country
-              </Typography>
-              <Typography display="block" gutterBottom className={classes.banner}>
-                Get outdoors
-              </Typography>
-            <div style={{ height: '800px' }} />
-          </Parallax>
-        </Grid>
-      </Grid>
-      <Grid container spacing={0} xs={12} className={classes.body} justify="center">
-        <Grid item className={classes.body1}>
-          <Parallax
-              bgImage={deer}
-              bgImageSrcSet={deerSrcSet}
-              bgImageAlt="deer"
-              strength={300}
-              className={classes.body2}
-            >
-              <Card className={classes.card}>
-                <CardContent>
-                  <Typography className={classes.title} color="textSecondary" gutterBottom>
-                    Find Land To Hunt On
-                  </Typography>
-                  <Typography variant="body2" component="p">
-                      Use our state of the art maps
-                  </Typography>
-                  
-                  <Typography variant="body2" component="p">
-                      Search based on zone, game type, and location
-                  </Typography>
-                  <Typography variant="body2" component="p">
-                      Schedule a reservation to hunt in peace
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small">Learn More</Button>
-                </CardActions>
-              </Card>
-              <div style={{ height: '800px' }} />
-          </Parallax>
-        </Grid>
-      </Grid>
-      <Grid container spacing={0} xs={12} className={classes.body} justify="center">
-        <Grid item className={classes.body1}>
-          <Parallax
-            bgImage={whitetail}
-            bgImageSrcSet={snowDeerSrcSet}
-            bgImageAlt="deer"
-            strength={400}
-            className={classes.body2}
-          >
-            <div style={{ height: '800px' }}>
-              <Typography display="block" gutterBottom className={classes.bannerRight}>
-                Make money from your unused land
-              </Typography>
-              <Typography display="block" gutterBottom className={classes.bannerRight}>
-                Hunt the back wood country
-              </Typography>
-              <Typography display="block" gutterBottom className={classes.bannerRight}>
-                Get outdoors
-              </Typography>
-            </div>
-          </Parallax>
-        </Grid>
-      </Grid>
-    </Grid>
-  );
+  render() {
+    return (
+      <SearchResults Filters={this.state.filters} />
+    )
+  }
 }
 
 export default Home;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
 import { Button, FormControl, TextField, Grid } from '@material-ui/core';
-import logo from './logo2.png'
+import logo from './pics/logo2.png'
 import { Auth } from 'aws-amplify';
 import { CognitoUser } from 'amazon-cognito-identity-js'
 import { connect } from 'react-redux';
