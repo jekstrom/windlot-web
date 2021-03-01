@@ -12,7 +12,7 @@ import Typography from '../components/Typography';
 import TextField from '../components/TextField';
 import Snackbar from '../components/Snackbar';
 import Button from '../components/Button';
-import ducks from '../../ducks.jpg'
+import ducks from './photos/duckFooter.jpg'
 
 const styles = (theme: Theme) =>
   createStyles({

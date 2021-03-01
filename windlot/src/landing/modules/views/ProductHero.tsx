@@ -8,13 +8,13 @@ import {
 import Button from '../components/Button';
 import Typography from '../components/Typography';
 import ProductHeroLayout from './ProductHeroLayout';
-import backgroundImage from '../../../pages/white_tail_snow.jpg'
+import backgroundImage from './photos/heroImage4.jpg'
 
 const styles = (theme: Theme) =>
   createStyles({
     background: {
       backgroundImage: `url(${backgroundImage})`,
-      backgroundColor: '#7fc7d9', // Average color of the background image.
+      //backgroundColor: '#7fc7d9', // Average color of the background image.
       backgroundPosition: 'center',
     },
     button: {

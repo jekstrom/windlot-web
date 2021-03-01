@@ -37,7 +37,7 @@ const styles = (theme: Theme) =>
       top: 0,
       bottom: 0,
       backgroundColor: theme.palette.common.black,
-      opacity: 0.5,
+      opacity: 0.2,
       zIndex: -1,
     },
     background: {
@@ -70,12 +70,6 @@ function ProductHeroLayout(
   return (
     <section className={classes.root}>
       <Container className={classes.container}>
-        <img
-          src={wonder}
-          alt="wonder"
-          width="147"
-          height="80"
-        />
         {children}
         <div className={classes.backdrop} />
         <div className={clsx(classes.background, backgroundClassName)} />
