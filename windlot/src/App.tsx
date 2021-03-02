@@ -53,8 +53,9 @@ function App() {
               <Route path="/create-listing">
                 <CreateListing />
               </Route>
-              <Route path="/listing-details">
-                <ListingDetails />
+              <Route path="/listing-details/:id" render={(props) => {
+                  return (<ListingDetails ListingId={props.match.params.id} />)
+                }}>
               </Route>
               <Route path="/login" render={(routerProps) => {
                   return (
@@ -68,8 +69,11 @@ function App() {
               <Route path="/profile">
                 <Profile />
               </Route>
-              <Route path="/home">
-                <Home />
+              <Route path="/home" render={(routerProps) => {
+                  return (
+                    <Home routerProps={routerProps}/>
+                  )
+                }}>
               </Route>  
               <Route path="/">
                 <Index />

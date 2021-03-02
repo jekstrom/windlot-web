@@ -28,7 +28,7 @@ interface SearchResultsProps {
 
 
 interface IProps {
-
+  routerProps: any
 }
 
 interface IState {
@@ -109,7 +109,7 @@ class Home extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <SearchResults Filters={this.state.filters} />
+      <SearchResults Filters={this.state.filters} routerProps={this.props.routerProps} />
     )
   }
 }

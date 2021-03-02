@@ -44,8 +44,11 @@ Resources:
               AWS:
                 - !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/${ListingIndexerFunctionRole}/ListingIndexerFunction-${Environment}"
                 - !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/${ListingSearchFunctionRole}/ListingSearchFunction-${Environment}"
+                - !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/${ListingGetFunctionRole}/ListingGetFunction-${Environment}"
             Action: "es:*"
-            Resource: !Sub "arn:aws:es:${AWS::Region}:domain/listings-${Environment}/*"
+            Resource: 
+              - !Sub "arn:aws:es:${AWS::Region}:domain/listings-${Environment}/*"
+              - !Sub "arn:aws:es:${AWS::Region}:domain/listings-${Environment}"
 
   ApiGatewayApi:
     Type: AWS::Serverless::Api
@@ -106,6 +109,7 @@ Resources:
                   - es:ESHttpGet
                 Resource: 
                   - !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/listings-${Environment}"
+                  - !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/listings-${Environment}/*"
 
   ListingIndexerFunction:
     Type: AWS::Serverless::Function
@@ -175,6 +179,7 @@ Resources:
                   - es:ESHttpPost
                 Resource: 
                   - !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/listings-${Environment}"
+                  - !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/listings-${Environment}/*"
 
   ListingSearchFunction:
     Type: AWS::Serverless::Function
@@ -195,6 +200,74 @@ Resources:
           Type: Api 
           Properties:
             Path: /search
+            Method: post
+            RestApiId: !Ref ApiGatewayApi
+
+  ListingGetFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+      Policies:
+        - PolicyName: !Sub "GetPolicy-${Environment}"
+          PolicyDocument:
+            Version: '2012-10-17' 
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectACL
+                  - s3:ListBucket
+                  - s3:PutObject
+                Resource: 
+                  - Fn::Sub:
+                      - "arn:aws:s3:::${bucketName}"
+                      - bucketName: 
+                          Fn::ImportValue: !Sub "${S3SourceBucketStackName}-BucketName"
+                  - Fn::Sub:
+                      - "arn:aws:s3:::${bucketName}/*"
+                      - bucketName:
+                          Fn::ImportValue: !Sub "${S3SourceBucketStackName}-BucketName"
+        - PolicyName: !Sub "GetPolicy-ES-${Environment}"
+          PolicyDocument:
+            Version: '2012-10-17' 
+            Statement:
+              - Effect: Allow
+                Action:
+                  - es:ESHttpGet
+                Resource: 
+                  - !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/listings-${Environment}"
+                  - !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/listings-${Environment}/*"
+
+  ListingGetFunction:
+    Type: AWS::Serverless::Function
+    DependsOn: ElasticsearchDomain
+    Properties:
+      FunctionName: !Sub "ListingGetFunction-${Environment}"
+      CodeUri: get_function.zip
+      PackageType: Zip
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Timeout: 180
+      Role: !GetAtt ListingGetFunctionRole.Arn
+      Environment:
+        Variables:
+          ElasticsearchDomain: !GetAtt ElasticsearchDomain.DomainEndpoint
+      Events:
+        Notification:
+          Type: Api 
+          Properties:
+            Path: /get
             Method: post
             RestApiId: !Ref ApiGatewayApi
 

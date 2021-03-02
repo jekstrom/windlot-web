@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
-import { Button, Grid, Typography, Card, CardActions, CardContent, CardMedia, FormControlLabel, TextField, Checkbox, Hidden } from '@material-ui/core';
+import { Button, Grid, Typography, Card, CardActions, CardActionArea, CardContent, CardMedia, FormControlLabel, TextField, Checkbox, Hidden } from '@material-ui/core';
 
 const styles = (theme: Theme) => 
     createStyles({
@@ -28,7 +28,8 @@ interface Item {
 }
 
 interface SearchItemProps {
-    Item: Item
+    Item: Item,
+    routerProps: any
 }
   
 function SearchItem(props: WithStyles<typeof styles> & SearchItemProps) {
@@ -37,37 +38,39 @@ function SearchItem(props: WithStyles<typeof styles> & SearchItemProps) {
   return (
     <Grid item xs={12} md={12}>
         <Card className={classes.root}>
-            <Grid container>
-                <Grid item xs={12} md={5}>
-                    <CardMedia
-                        component="img"
-                        className={classes.listingImage}
-                        image={props.Item.ImageUrl}
-                        title={props.Item.Name}
-                    />
+            <CardActionArea onClick={() => props.routerProps.history.push(`/listing-details/${props.Item.Id}`)}>
+                <Grid container>
+                    <Grid item xs={12} md={5}>
+                        <CardMedia
+                            component="img"
+                            className={classes.listingImage}
+                            image={props.Item.ImageUrl}
+                            title={props.Item.Name}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <CardContent>
+                            <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                {props.Item.Name}
+                            </Typography>
+                            <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                {props.Item.Id}
+                            </Typography>
+                            <Typography variant="body2" component="p">
+                                ${props.Item.Price}
+                            </Typography>
+                        </CardContent>
+                    </Grid>
+                    <Grid item md={1} className={classes.listingButton}>
+                        <Hidden mdDown>
+                            <CardActions>
+                                {/* Navigate to item id details */}
+                                <Button size="small" onClick={() => props.routerProps.history.push(`/listing-details/${props.Item.Id}`)}>Details</Button>
+                            </CardActions>
+                        </Hidden>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                    <CardContent>
-                        <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            {props.Item.Name}
-                        </Typography>
-                        <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            {props.Item.Id}
-                        </Typography>
-                        <Typography variant="body2" component="p">
-                            ${props.Item.Price}
-                        </Typography>
-                    </CardContent>
-                </Grid>
-                <Grid item md={1} className={classes.listingButton}>
-                    <Hidden mdDown>
-                        <CardActions>
-                            {/* Navigate to item id details */}
-                            <Button size="small">Details</Button>
-                        </CardActions>
-                    </Hidden>
-                </Grid>
-            </Grid>
+            </CardActionArea>
         </Card>
     </Grid>
   );

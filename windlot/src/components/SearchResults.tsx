@@ -3,6 +3,7 @@ import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/s
 import { Button, Grid, Typography, TextField } from '@material-ui/core';
 import SearchFilter from './SearchFilter'
 import SearchItem from './SearchItem'
+import image from '../pages/pics/land.jpg'
 
 const styles = (theme: Theme) => 
     createStyles({
@@ -74,7 +75,8 @@ interface Item {
 }
 
 interface SearchResultsProps extends WithStyles<typeof styles> {
-    Filters: Array<FilterCategory>
+    Filters: Array<FilterCategory>,
+    routerProps: any
 }
 
 interface IState {
@@ -140,7 +142,7 @@ class SearchResults extends React.Component<SearchResultsProps, IState> {
             "Name": searchHit._source.name,
             "Price": searchHit._source.price,
             "Id": searchHit._id,
-            "ImageUrl": ""
+            "ImageUrl": image
         }
     }
 
@@ -204,7 +206,7 @@ class SearchResults extends React.Component<SearchResultsProps, IState> {
             <Grid container className={classes.searchResults} spacing={1}>
                 {
                     this.state.Items?.map(function(item, i) {
-                        return <SearchItem Item={item} />
+                        return <SearchItem Item={item} routerProps={self.props.routerProps} />
                     })
                 }
             </Grid> 
