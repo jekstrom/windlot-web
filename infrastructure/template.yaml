@@ -106,6 +106,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - es:ESHttpPost
+                  - es:ESHttpPut
                   - es:ESHttpGet
                 Resource: 
                   - !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/listings-${Environment}"
@@ -271,6 +272,79 @@ Resources:
             Method: post
             RestApiId: !Ref ApiGatewayApi
 
+  ListingUploadFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+      Policies:
+        - PolicyName: !Sub "UploadPolicy-${Environment}"
+          PolicyDocument:
+            Version: '2012-10-17' 
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectACL
+                  - s3:ListBucket
+                  - s3:PutObject
+                Resource: 
+                  - Fn::Sub:
+                      - "arn:aws:s3:::${bucketName}"
+                      - bucketName: 
+                          Fn::ImportValue: !Sub "${S3SourceBucketStackName}-BucketName"
+                  - Fn::Sub:
+                      - "arn:aws:s3:::${bucketName}/*"
+                      - bucketName:
+                          Fn::ImportValue: !Sub "${S3SourceBucketStackName}-BucketName"
+        # - PolicyName: !Sub "S3UploadPolicy-${Environment}"
+        #   PolicyDocument:
+        #     Version: '2012-10-17' 
+        #     Statement:
+        #       - Effect: Allow
+        #         Action:
+        #           - s3:GetObject
+        #           - s3:GetObjectACL
+        #           - s3:ListBucket
+        #           - s3:PutObject
+        #         Resource: 
+        #           - Fn::Sub:
+        #               - "arn:aws:s3:::${bucketName}"
+        #               - bucketName:  # Picture bucket
+        #                   Fn::ImportValue: !Sub "${S3SourceBucketStackName}-BucketName"
+        #           - Fn::Sub:
+        #               - "arn:aws:s3:::${bucketName}/*"
+        #               - bucketName:
+        #                   Fn::ImportValue: !Sub "${S3SourceBucketStackName}-BucketName"
+
+
+  ListingUploadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "ListingUploadFunction-${Environment}"
+      CodeUri: upload_function.zip
+      PackageType: Zip
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Timeout: 180
+      Role: !GetAtt ListingUploadFunctionRole.Arn
+      Events:
+        Notification:
+          Type: Api 
+          Properties:
+            Path: /upload
+            Method: post
+            RestApiId: !Ref ApiGatewayApi
 
 
 

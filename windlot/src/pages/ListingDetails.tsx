@@ -26,12 +26,14 @@ const styles = (theme: Theme) =>
 interface Listing {
     Name: string,
     Price: number,
-    Amenities: string,
-    Location: string,
+    Amenities: string[],
+    GameTypes: string[],
+    LocationCountry: string,
+    LocationState: string,
+    LocationPoints: [],
     ImageUrl: string,
     Id: string,
     Description: string,
-    GameType: string,
     ContactInfo: string
 }
 
@@ -82,11 +84,13 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
                 Name: json._source.name,
                 Price: json._source.price,
                 Amenities: json._source.amenities,
-                Location: json._source.location,
+                LocationCountry: json._source.location.country,
+                LocationState: json._source.location.state,
+                LocationPoints: json._source.location.coordinates,
                 ImageUrl: "",
                 Id: json._id,
                 Description: json._source.description,
-                GameType: json._source.gameType,
+                GameTypes: json._source.gameTypes ?? [],
                 ContactInfo: json._source.contact_info
             }
 
@@ -113,7 +117,7 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
                             <Grid container>
                                 <Grid item xs={6}>
                                     <Typography display="block" gutterBottom className={classes.price}>
-                                        {self.state.Listing?.Price} / day
+                                        ${self.state.Listing?.Price} / day
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={6}>
@@ -122,7 +126,7 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
                             </Grid>
                         </Grid>
                         <Grid item xs={12} className={classes.cell}>
-                            {self.state.Listing?.Location}
+                          {self.state.Listing?.LocationState}, {self.state.Listing?.LocationCountry}
                         </Grid>
                         <Grid item xs={12} className={classes.cell}>
                             25 acres
@@ -133,19 +137,20 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
                         <Grid item xs={12} className={classes.cell}>
                             <Typography variant="h6">Amenities</Typography>
                             <Typography display="block" gutterBottom>
-                                {self.state.Listing?.Amenities}
+                                {self.state.Listing?.Amenities.join(", ")}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} className={classes.cell}>
                             <Typography variant="h6">Game Types</Typography>
                             <Typography display="block" gutterBottom>
-                                {self.state.Listing?.GameType}
+                                {self.state.Listing?.GameTypes.join(", ")}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} className={classes.cell}>
                             <Typography variant="h6">Description</Typography>
                                 <p>{self.state.Listing?.Description}</p>
                         </Grid>
+                        {/* TODO: Add calendar view and contact info functionality. */}
                     </Grid>
                 </Grid>
             </Grid>

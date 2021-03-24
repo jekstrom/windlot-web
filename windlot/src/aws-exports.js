@@ -7,7 +7,9 @@ const awsmobile = {
     "aws_cognito_region": "us-west-2",
     "aws_user_pools_id": "us-west-2_Gsk51O8df",
     "aws_user_pools_web_client_id": "359kocdsoomuu0t6r7mtl8folb",
-    "oauth": {}
+    "oauth": {},
+    "aws_user_files_s3_bucket": "windlotlistingimages115413-dev",
+    "aws_user_files_s3_bucket_region": "us-west-2"
 };
 
 

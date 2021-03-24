@@ -142,7 +142,7 @@ class SearchResults extends React.Component<SearchResultsProps, IState> {
             "Name": searchHit._source.name,
             "Price": searchHit._source.price,
             "Id": searchHit._id,
-            "ImageUrl": image
+            "ImageUrl": searchHit._source.imageUrl
         }
     }
 

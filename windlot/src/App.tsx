@@ -9,7 +9,6 @@ import {
 import './App.css';
 import CreateListing from "./pages/CreateListing"
 import { store } from './store/index'
-import { Button } from '@material-ui/core';
 import Amplify, { Auth } from 'aws-amplify';
 import awsconfig from './aws-exports';
 
@@ -19,12 +18,18 @@ import Login from "./pages/Login"
 import CreateAccount from "./pages/CreateAccount"
 import Profile from './pages/Profile';
 import ListingDetails from './pages/ListingDetails';
+
+// TODO: don't pull things from landing, put them in a common directory
+import AppAppBar from './landing/modules/views/AppAppBar'
+import withRoot from './landing/modules/withRoot';
+
 Amplify.configure(awsconfig);
 
 function App() {
   return (
     <Provider store={store}>
       <div className="App">
+        <AppAppBar/>
         <Router>
           <div>
             {/* <nav>
@@ -54,7 +59,9 @@ function App() {
                 <CreateListing />
               </Route>
               <Route path="/listing-details/:id" render={(props) => {
-                  return (<ListingDetails ListingId={props.match.params.id} />)
+                  return (
+                    <ListingDetails ListingId={props.match.params.id} />
+                  )
                 }}>
               </Route>
               <Route path="/login" render={(routerProps) => {
@@ -71,7 +78,7 @@ function App() {
               </Route>
               <Route path="/home" render={(routerProps) => {
                   return (
-                    <Home routerProps={routerProps}/>
+                      <Home routerProps={routerProps}/>
                   )
                 }}>
               </Route>  
@@ -87,4 +94,4 @@ function App() {
   );
 }
 
-export default App;
+export default withRoot(App);

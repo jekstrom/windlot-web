@@ -57,7 +57,7 @@ function SearchItem(props: WithStyles<typeof styles> & SearchItemProps) {
                                 {props.Item.Id}
                             </Typography>
                             <Typography variant="body2" component="p">
-                                ${props.Item.Price}
+                                ${props.Item.Price.toFixed(2)}
                             </Typography>
                         </CardContent>
                     </Grid>

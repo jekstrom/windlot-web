@@ -20,6 +20,8 @@ def lambda_handler(event, context):
     print("Body: ")
     print(body)
 
+    print(event['requestContext'])
+
     if not body:
         print("No body in event.")
         return None
@@ -27,11 +29,20 @@ def lambda_handler(event, context):
     try:
         name = body['name']
         description = body['description']
-        contact_info = body['contactInfo']
-        location = body['location']
-        game_type = body['gameType']
+        contact_info = event['requestContext']['authorizer']['claims']['email']
+        # TODO: Fix this lame hack lol. Have database of available countries and states
+        location_country = body['locationCountry']
+        location_state = "Washington" if body['locationState'] == "1" else "Minnesota"
+        location_points = body['locationPoints']
+        game_types = body['gameTypes']
         amenities = body['amenities']
+        # TODO: Fix time zones on dates. 
+        # Store all dates as UTC and convert to local time zone client side.
+        availability_start = body['availabilityStart']
+        availability_end = body['availabilityEnd']
         price = float(body['price'])
+        image_key = body['imageKey']
+        user_id = body['userId']
 
         es = Elasticsearch(
             hosts = [{'host': host, 'port': 443}],
@@ -41,14 +52,26 @@ def lambda_handler(event, context):
             connection_class = RequestsHttpConnection
         )
 
+        # TODO: Set cloudfront domain with env variable.
+        image_url = f"https://d313fgcudovroe.cloudfront.net/{user_id}/{image_key}"
+
         document = {
             "name": name,
             "description": description,
             "contact_info": contact_info,
-            "location": location,
-            "gameType": game_type,
+            "location": {
+                "coordinates": location_points,
+                "country": "United States",
+                "state": location_state
+            },
+            "availability": {
+                "start": availability_start,
+                "end": availability_end
+            },
+            "gameTypes": game_types,
             "amenities": amenities,
-            "price": price
+            "price": price,
+            "imageUrl": image_url
         }
 
         print("Document: ")
