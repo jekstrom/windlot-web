@@ -87,7 +87,7 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
                 LocationCountry: json._source.location.country,
                 LocationState: json._source.location.state,
                 LocationPoints: json._source.location.coordinates,
-                ImageUrl: "",
+                ImageUrl: json._source.imageUrl,
                 Id: json._id,
                 Description: json._source.description,
                 GameTypes: json._source.gameTypes ?? [],
@@ -109,7 +109,7 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
         return (
             <Grid className={classes.root} container spacing={1}>
                 <Grid item xs={6}>
-                    <img src={land} width="100%" />
+                    <img src={self.state.Listing?.ImageUrl} width="100%" />
                 </Grid>
                 <Grid item xs={3}>
                     <Grid container>

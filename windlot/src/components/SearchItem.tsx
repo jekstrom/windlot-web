@@ -6,7 +6,8 @@ const styles = (theme: Theme) =>
     createStyles({
         root: {
             '& > *': {
-            margin: theme.spacing(0),
+                margin: theme.spacing(0),
+                height: "275px"
             },
         }, 
         listingImage: {
