@@ -6,6 +6,10 @@ import Link from '@material-ui/core/Link';
 import AppBar from '../components/AppBar';
 import Toolbar, { styles as toolbarStyles } from '../components/Toolbar';
 import { Auth } from 'aws-amplify';
+import { connect } from 'react-redux';
+import { login } from '../../../actions'
+import { store } from '../../../store'
+
 
 const styles = (theme: Theme) => ({
   title: {
@@ -37,32 +41,52 @@ const styles = (theme: Theme) => ({
 });
 
 interface IProps extends WithStyles<typeof styles> {
-
+  loggedIn: boolean,
+  loggedInUser: any | null,
+  logInMessage: string | null
 }
 
 interface IState {
-  user: any
+  loggedIn: boolean,
+  loggedInUser: any | null,
+  logInMessage: string | null
 }
 
 class AppAppBar extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
+
     this.state = {
-      user: {
-        username: "",
-        email: "",
-        location: ""
-      }
+      loggedIn: false,
+      loggedInUser: null,
+      logInMessage: ""
     }
   }
 
   async componentDidMount() {
       try {
           const { attributes } = await Auth.currentAuthenticatedUser();
-          this.setState({ user: attributes });
+          store.dispatch(login({
+            loggedIn: !!attributes,
+            loggedInUser: attributes,
+            logInMessage: ""
+          }));
       } catch (error) {
           console.log("Error getting user: ", error)
       }
+  }
+
+  _signout = async () => {
+    try {
+        await Auth.signOut({ global: true });
+        store.dispatch(login({
+          loggedIn: false,
+          loggedInUser: null,
+          logInMessage: ""
+        }));
+    } catch (error) {
+        console.log("error signing out: ", error);
+    }
   }
 
   render() {
@@ -83,7 +107,7 @@ class AppAppBar extends React.Component<IProps, IState> {
             </Link>
             <div className={classes.right}>
               {
-                !!this.state.user.email ? 
+                this.props.loggedIn ? 
                     <div>
                       <Link
                         variant="h6"
@@ -97,7 +121,8 @@ class AppAppBar extends React.Component<IProps, IState> {
                         variant="h6"
                         underline="none"
                         className={clsx(classes.rightLink)}
-                        href="/create-account"
+                        href="#"
+                        onClick={this._signout}
                       >
                         {'Log Out'}
                       </Link>
@@ -134,4 +159,13 @@ class AppAppBar extends React.Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles)(AppAppBar);
+const mapStateToProps = (state: any) => {
+  return {
+    loggedIn: state.LoginReducer.loggedIn,
+    loggedInUser: state.LoginReducer.loggedInUser,
+    logInMessage: state.LoginReducer.logInMessage
+  }
+}
+
+//export default withStyles(styles)(AppAppBar);
+export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(AppAppBar));
