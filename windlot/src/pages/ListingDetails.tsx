@@ -1,7 +1,8 @@
 import React from 'react';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
-import { Button, Box, Grid, Divider, List, ListItem, ListItemText } from '@material-ui/core';
+import { Button, Box, Grid, Divider, List, ListItem, ListItemText, FormControl, TextareaAutosize, TextField } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import { Auth } from 'aws-amplify';
 import land from './pics/land.jpg'
 
 const styles = (theme: Theme) =>
@@ -16,6 +17,7 @@ const styles = (theme: Theme) =>
         },
         cell: {
             textAlign: "start",
+            margin: "1px"
         },
         price: {
             fontWeight: 700,
@@ -43,13 +45,17 @@ interface ListingDetailProps extends WithStyles<typeof styles> {
 
 interface IState {
     Listing: Listing | null,
+    hunterName: string | null,
+    message: string | null,
 }
 
 class ListingDetails extends React.Component<ListingDetailProps, IState> {
     constructor(props: ListingDetailProps) {
         super(props);
         this.state = {
-            Listing: null
+            Listing: null,
+            hunterName: null,
+            message: null
         }
     }
 
@@ -102,16 +108,54 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
         }
     }
 
+    _sendContact = () => {
+        console.log("Sending contact info...");
+        var self = this;
+        Auth.currentSession()
+        .then(async data => {
+            let userid = await Auth.currentUserInfo();
+            console.log(userid)
+
+            let authtoken = data.getIdToken().getJwtToken();
+            let response = await fetch(
+                // TODO: Get url automatically (configuration??)
+                'https://0mxjsyzjjj.execute-api.us-west-2.amazonaws.com/dev/contact/',
+                {
+                    mode: 'cors',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authtoken}`
+                    },
+                    body: JSON.stringify({
+                        "hunterName": self.state.hunterName,
+                        "message": self.state.message,
+                        "listingId": self.state.Listing?.Id ?? "",
+                        "userId": userid.id,
+                        "email": userid.attributes.email
+                    })
+                }
+            );
+            let json = await response.json();
+            console.log(json);
+
+            return json;
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    }
+
     render() {
         const { classes } = this.props;
         const self = this;
 
         return (
             <Grid className={classes.root} container spacing={1}>
-                <Grid item xs={6}>
-                    <img src={self.state.Listing?.ImageUrl} width="100%" />
+                <Grid item lg={5} md={5} xs={12}>
+                    <img src={self.state.Listing?.ImageUrl} width="90%" />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item lg={3} md={5} xs={12}>
                     <Grid container>
                         <Grid item xs={12} className={classes.cell}>
                             <Grid container>
@@ -120,17 +164,12 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
                                         ${self.state.Listing?.Price} / day
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={6}>
-                                    <Button variant="contained" color="primary" className={classes.button}>Contact</Button>
-                                </Grid>
                             </Grid>
                         </Grid>
                         <Grid item xs={12} className={classes.cell}>
                           {self.state.Listing?.LocationState}, {self.state.Listing?.LocationCountry}
                         </Grid>
-                        <Grid item xs={12} className={classes.cell}>
-                            25 acres
-                        </Grid>
+
                         <Grid item xs={12} className={classes.cell}>
                             &nbsp; {/* Left Blank  */}
                         </Grid>
@@ -151,6 +190,39 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
                                 <p>{self.state.Listing?.Description}</p>
                         </Grid>
                         {/* TODO: Add calendar view and contact info functionality. */}
+                    </Grid>
+                </Grid>
+                <Grid item lg={3} md={12} xs={12} className={classes.cell}>
+                    <Grid item xs={12} className={classes.cell}>
+                        <Typography variant="h6">Contact Form</Typography>
+                        <FormControl>
+                            <TextField 
+                                id="hunterName"
+                                placeholder="Name"
+                                onChange={(hunterName) => this.setState({hunterName: hunterName.target.value})}
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} className={classes.cell}>
+                        <FormControl>
+                            <TextareaAutosize 
+                                id="message"
+                                rowsMin={12}
+                                cols={40}
+                                placeholder="Message"
+                                onChange={(message) => this.setState({message: message.target.value})}
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            onClick={self._sendContact}
+                        >
+                            Contact
+                        </Button>
                     </Grid>
                 </Grid>
             </Grid>
