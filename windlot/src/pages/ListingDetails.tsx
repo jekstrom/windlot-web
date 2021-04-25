@@ -1,9 +1,11 @@
 import React from 'react';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
-import { Button, Box, Grid, Divider, List, ListItem, ListItemText, FormControl, TextareaAutosize, TextField } from '@material-ui/core';
+import { Button, Grid, FormControl, TextareaAutosize, TextField } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { Auth } from 'aws-amplify';
-import land from './pics/land.jpg'
+import { connect } from 'react-redux';
+import { login } from '../actions'
+import { store } from '../store'
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -40,28 +42,48 @@ interface Listing {
 }
 
 interface ListingDetailProps extends WithStyles<typeof styles> {
-    ListingId: string | null
+    ListingId: string | null,
+    loggedIn: boolean,
+    loggedInUser: any | null,
+    logInMessage: string | null
 }
 
 interface IState {
     Listing: Listing | null,
     hunterName: string | null,
     message: string | null,
+    loggedIn: boolean,
+    loggedInUser: any | null,
+    logInMessage: string | null
 }
 
 class ListingDetails extends React.Component<ListingDetailProps, IState> {
     constructor(props: ListingDetailProps) {
         super(props);
+
         this.state = {
             Listing: null,
             hunterName: null,
-            message: null
+            message: null,
+            loggedIn: false,
+            loggedInUser: null,
+            logInMessage: ""
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         if (this.props.ListingId) {
             this._getListing(this.props.ListingId);
+        }
+        try {
+            const { attributes } = await Auth.currentAuthenticatedUser();
+            store.dispatch(login({
+              loggedIn: !!attributes,
+              loggedInUser: attributes,
+              logInMessage: ""
+            }));
+        } catch (error) {
+            console.log("Error getting user: ", error)
         }
     }
 
@@ -192,43 +214,55 @@ class ListingDetails extends React.Component<ListingDetailProps, IState> {
                         {/* TODO: Add calendar view and contact info functionality. */}
                     </Grid>
                 </Grid>
-                <Grid item lg={3} md={12} xs={12} className={classes.cell}>
-                    <Grid item xs={12} className={classes.cell}>
-                        <Typography variant="h6">Contact Form</Typography>
-                        <FormControl>
-                            <TextField 
-                                id="hunterName"
-                                placeholder="Name"
-                                onChange={(hunterName) => this.setState({hunterName: hunterName.target.value})}
-                            />
-                        </FormControl>
+                {
+                    this.props.loggedIn ?
+                    <Grid item lg={3} md={12} xs={12} className={classes.cell}>
+                        <Grid item xs={12} className={classes.cell}>
+                            <Typography variant="h6">Contact Form</Typography>
+                            <FormControl>
+                                <TextField 
+                                    id="hunterName"
+                                    placeholder="Name"
+                                    onChange={(hunterName) => this.setState({hunterName: hunterName.target.value})}
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} className={classes.cell}>
+                            <FormControl>
+                                <TextareaAutosize 
+                                    id="message"
+                                    rowsMin={12}
+                                    cols={40}
+                                    placeholder="Message"
+                                    onChange={(message) => this.setState({message: message.target.value})}
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                className={classes.button}
+                                onClick={self._sendContact}
+                            >
+                                Contact
+                            </Button>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} className={classes.cell}>
-                        <FormControl>
-                            <TextareaAutosize 
-                                id="message"
-                                rowsMin={12}
-                                cols={40}
-                                placeholder="Message"
-                                onChange={(message) => this.setState({message: message.target.value})}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            className={classes.button}
-                            onClick={self._sendContact}
-                        >
-                            Contact
-                        </Button>
-                    </Grid>
-                </Grid>
+                    : <div/>
+                }
             </Grid>
         );
     }
 }
 
-export default withStyles(styles)(ListingDetails);
+const mapStateToProps = (state: any) => {
+    return {
+        loggedIn: state.LoginReducer.loggedIn,
+        loggedInUser: state.LoginReducer.loggedInUser,
+        logInMessage: state.LoginReducer.logInMessage
+    }
+}
 
+// export default withStyles(styles)(ListingDetails);
+export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(ListingDetails));

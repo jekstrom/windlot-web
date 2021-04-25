@@ -40,6 +40,7 @@ def lambda_handler(event, context):
         # Store all dates as UTC and convert to local time zone client side.
         availability_start = body['availabilityStart']
         availability_end = body['availabilityEnd']
+        timezone_offset_ms = body['timezoneOffset']
         price = float(body['price'])
         image_key = body['imageKey']
         user_id = body['userId']
@@ -66,7 +67,8 @@ def lambda_handler(event, context):
             },
             "availability": {
                 "start": availability_start,
-                "end": availability_end
+                "end": availability_end,
+                "timezoneOffsetMs": timezone_offset_ms
             },
             "gameTypes": game_types,
             "amenities": amenities,

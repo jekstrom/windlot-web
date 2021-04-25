@@ -345,6 +345,8 @@ Resources:
             Path: /upload
             Method: post
             RestApiId: !Ref ApiGatewayApi
+            Auth:
+              Authorizer: CognitoAuth
 
   ContactDynamoTable:
     Type: AWS::DynamoDB::Table

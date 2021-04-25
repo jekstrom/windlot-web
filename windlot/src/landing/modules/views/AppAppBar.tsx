@@ -1,6 +1,6 @@
 import * as React from 'react';
 import clsx from 'clsx';
-import { AppBarProps, WithStyles } from '@material-ui/core';
+import { WithStyles, Grid } from '@material-ui/core';
 import { withStyles, Theme } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import AppBar from '../components/AppBar';
@@ -24,6 +24,9 @@ const styles = (theme: Theme) => ({
   },
   leftLinkActive: {
     color: theme.palette.common.white,
+  },
+  grid: {
+    justifyContent: "flex-end"
   },
   right: {
     flex: 1,
@@ -108,45 +111,53 @@ class AppAppBar extends React.Component<IProps, IState> {
             <div className={classes.right}>
               {
                 this.props.loggedIn ? 
-                    <div>
+                    <Grid container md={3} xs={12}>
+                      <Grid>
+                        <Link
+                          variant="h6"
+                          underline="none"
+                          className={clsx(classes.rightLink, classes.linkSecondary)}
+                          href="/create-listing"
+                        >
+                          {'List Land'}
+                        </Link>
+                      </Grid>
+                      <Grid>
+                        <Link
+                          variant="h6"
+                          underline="none"
+                          className={clsx(classes.rightLink)}
+                          href="#"
+                          onClick={this._signout}
+                        >
+                          {'Log Out'}
+                        </Link>
+                      </Grid>
+                    </Grid>
+                  :
+                  <Grid container md={3} xs={12}>
+                    <Grid>
+                      <Link
+                        color="inherit"
+                        variant="h6"
+                        underline="none"
+                        className={classes.rightLink}
+                        href="/login"
+                      >
+                        {'Sign In'}
+                      </Link>
+                    </Grid>
+                    <Grid>
                       <Link
                         variant="h6"
                         underline="none"
                         className={clsx(classes.rightLink, classes.linkSecondary)}
-                        href="/create-listing"
+                        href="/create-account"
                       >
-                        {'Create Listing'}
+                        {'Sign Up'}
                       </Link>
-                      <Link
-                        variant="h6"
-                        underline="none"
-                        className={clsx(classes.rightLink)}
-                        href="#"
-                        onClick={this._signout}
-                      >
-                        {'Log Out'}
-                      </Link>
-                    </div>
-                  :
-                  <div>
-                    <Link
-                      color="inherit"
-                      variant="h6"
-                      underline="none"
-                      className={classes.rightLink}
-                      href="/login"
-                    >
-                      {'Sign In'}
-                    </Link>
-                    <Link
-                      variant="h6"
-                      underline="none"
-                      className={clsx(classes.rightLink, classes.linkSecondary)}
-                      href="/create-account"
-                    >
-                      {'Sign Up'}
-                    </Link>
-                  </div>
+                    </Grid>
+                  </Grid>
               }
               
               

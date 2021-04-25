@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
-import { Avatar, Button, Icon, IconButton, FormControl, FormLabel, Input, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, InputLabel, FormHelperText, MenuItem, Select, TextField, TextareaAutosize, Grid, Hidden } from '@material-ui/core';
+import { Button, IconButton, FormControl, FormLabel, List, ListItem, ListItemSecondaryAction, ListItemText, InputLabel, MenuItem, Select, TextField, TextareaAutosize, Grid, Hidden } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Auth, Storage } from 'aws-amplify';
@@ -48,6 +48,7 @@ interface IState {
   amenities: string[],
   availabilityStart: Date,
   availabilityEnd: Date,
+  timezoneOffset: number,
   price: number,
   pictures: File[]
 }
@@ -55,6 +56,8 @@ interface IState {
 class CreateListing extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
+    let date = new Date();
+    let tzoffset = date.getTimezoneOffset() * 60000; // Millesecond offset
     this.state = {
       name: "",
       description: "",
@@ -65,8 +68,9 @@ class CreateListing extends React.Component<IProps, IState> {
       gameTypes: [],
       amenity: "",
       amenities: [],
-      availabilityStart: new Date(),
-      availabilityEnd: new Date(),
+      availabilityStart: date,
+      availabilityEnd: date,
+      timezoneOffset: tzoffset,
       price: 0,
       pictures: []
     };
@@ -122,8 +126,9 @@ class CreateListing extends React.Component<IProps, IState> {
                     "locationPoints": self.state.locationPoints,
                     "gameTypes": self.state.gameTypes,
                     "amenities": self.state.amenities,
-                    "availabilityStart": self.state.availabilityStart,
-                    "availabilityEnd": self.state.availabilityEnd,
+                    "availabilityStart": self.state.availabilityStart.toISOString(),
+                    "availabilityEnd": self.state.availabilityEnd.toISOString(),
+                    "timezoneOffset": self.state.timezoneOffset,
                     "price": self.state.price,
                     "imageKey": imageNameEncoded,
                     "userId": encodeURIComponent(userid.id)
@@ -293,7 +298,6 @@ class CreateListing extends React.Component<IProps, IState> {
                 <Select
                   labelId="state-label"
                   id="state"
-                  value={0}
                   onChange={(item) => this.setState({locationState: item.target.value as string})}
                 >
                   <MenuItem value={0}>
@@ -313,12 +317,12 @@ class CreateListing extends React.Component<IProps, IState> {
               </Hidden>
             </Grid>
             <Grid item md={3} xs={12} className={classes.formField}>
-            {/* TODO: Fix timezones on dates */}
+            {/* TODO: Do not allow start date after end date */}
               <TextField
-                id="date"
+                id="date-local"
                 label="Availability Start"
                 type="date"
-                value={this.state.availabilityStart?.toJSON().slice(0, 10) ?? ""}
+                defaultValue={(new Date((this.state.availabilityStart as any) - this.state.timezoneOffset))?.toJSON().slice(0, 10) ?? ""}
                 className={classes.textField}
                 onChange={(date) => this.setState({availabilityStart: !!date.currentTarget?.value ? new Date(date.currentTarget?.value) : new Date()})}
                 InputLabelProps={{
@@ -328,10 +332,10 @@ class CreateListing extends React.Component<IProps, IState> {
             </Grid>
             <Grid item md={3} xs={12} className={classes.formField}>
               <TextField
-                id="date"
+                id="date-local"
                 label="Availability End"
                 type="date"
-                value={this.state.availabilityEnd?.toJSON().slice(0, 10) ?? ""}
+                defaultValue={(new Date((this.state.availabilityEnd as any) - this.state.timezoneOffset))?.toJSON().slice(0, 10) ?? ""}
                 className={classes.textField}
                 onChange={(date) => this.setState({availabilityEnd: !!date.currentTarget?.value ? new Date(date.currentTarget?.value) : new Date()})}
                 InputLabelProps={{
